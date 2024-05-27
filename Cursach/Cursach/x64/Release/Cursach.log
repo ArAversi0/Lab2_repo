@@ -1,0 +1,9 @@
+﻿  PlayWnd.cpp
+  Wnd.cpp
+  Создание кода
+C:\Users\student-09-307\source\repos\Cursach\Cursach\Wnd.cpp(157): warning C4715: MainProcedure: значение возвращается не при всех путях выполнения
+  10 of 101 functions ( 9.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  Cursach.vcxproj -> C:\Users\student-09-307\source\repos\Cursach\x64\Release\Cursach.exe

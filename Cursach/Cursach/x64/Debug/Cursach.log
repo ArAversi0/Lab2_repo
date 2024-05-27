@@ -1,0 +1,19 @@
+﻿  Main.cpp
+  Menu.cpp
+  PlayWnd.cpp
+F:\Visual Studio\Cursach\Cursach\PlayWnd.cpp(147,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+  MazeForming.cpp
+F:\Visual Studio\Cursach\Cursach\MazeForming.cpp(165,25): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\Visual Studio\Cursach\Cursach\MazeForming.cpp(197,25): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+F:\Visual Studio\Cursach\Cursach\MazeForming.cpp(273,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+F:\Visual Studio\Cursach\Cursach\MazeForming.cpp(321,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+F:\Visual Studio\Cursach\Cursach\MazeForming.cpp(369,12): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+  Room.cpp
+  Camera.cpp
+  Character.cpp
+  Settings.cpp
+  Statistics.cpp
+  Wnd.cpp
+  Создание кода...
+F:\Visual Studio\Cursach\Cursach\Wnd.cpp(291): warning C4715: MainProcedure: значение возвращается не при всех путях выполнения
+  Cursach.vcxproj -> F:\Visual Studio\Cursach\x64\Debug\Cursach.exe
