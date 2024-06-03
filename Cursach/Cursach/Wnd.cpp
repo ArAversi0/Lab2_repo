@@ -108,8 +108,9 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 											GetClientRect(hWndMaze, &_rect_2);
 											PAINTSTRUCT _ps_2;
 											HDC _hdc_2 = BeginPaint(hWndMaze, &_ps_2);
-											ma.BotAlgorithm();
-											ma.drawBotWay(_hdc_2, hWndMaze, _rect_2);
+											ma.draw(_hdc_2, hWndMaze, _rect_2);
+											/*ma.BotAlgorithm();
+											ma.drawBotWay(_hdc_2, hWndMaze, _rect_2);*/
 											EndPaint(hWndMaze, &_ps_2);
 
 										}
@@ -120,6 +121,8 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 
 									case WM_COMMAND:
 									{
+										StatisticsWindow sW;
+										
 										switch (_wp)
 										{
 										case COMMANDS::OnFinishClicked:
@@ -220,11 +223,14 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 			if (_menu.GetStatistics()) DestroyWindow(_menu.GetStatistics());
 			std::pair<bool, HWND> _StatResult = _menu.AddWindow(L"StatWndClass", L"Statistics", _hWnd,
 				[](HWND hWnd, UINT _statMsg, WPARAM _wp, LPARAM _lp) -> LRESULT {
+					StatisticsWindow stat;
+					
 					switch (_statMsg)
 					{
 					case WM_CREATE:
 					{
-						
+						stat.StatisticsWidget(hWnd);
+						SetWindowPos(hWnd, HWND_TOPMOST, 300, 200, 900, 600, NULL);
 						
 						break;
 					}

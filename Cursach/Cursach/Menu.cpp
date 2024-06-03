@@ -49,16 +49,7 @@ void MainMenu::AddMainMenu(HWND hWnd)
 		(HMENU)COMMANDS::OnExitClicked,
 		GetModuleHandle(0), NULL
 	);
-	/*
-	HMENU _RootMenu = CreateMenu();
 
-	AppendMenu(_RootMenu, MF_STRING, COMMANDS::OnPlayClicked, L"Play");
-	AppendMenu(_RootMenu, MF_STRING, COMMANDS::OnStatisticClicked, L"Statistic");
-	AppendMenu(_RootMenu, MF_STRING, COMMANDS::OnSettingsClicked, L"Settings");
-	AppendMenu(_RootMenu, MF_STRING, COMMANDS::OnExitClicked, L"Exit");
-
-	SetMenu(hWnd, _RootMenu);
-	*/
 }
 
 void MainMenu::ExitApp()

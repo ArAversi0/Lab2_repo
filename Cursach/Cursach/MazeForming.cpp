@@ -1,113 +1,113 @@
-#include "Defs.h"
+п»ї#include "Defs.h"
 
-TheMazeWindow::~TheMazeWindow() {}
+TheMazeWindow::~TheMazeWindow() { delete[] _maze; }
 
 TheMazeWindow::TheMazeWindow()
 {
-	//В конструкторе инициализация динамического массива лабиринта и его размеров
+	// Р’ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґРёРЅР°РјРёС‡РµСЃРєРѕРіРѕ РјР°СЃСЃРёРІР° Р»Р°Р±РёСЂРёРЅС‚Р° Рё РµРіРѕ СЂР°Р·РјРµСЂРѕРІ
 	cons_x = 10, cons_y = 10;
-	maz = new int* [cons_y];
+	_maze = new int* [cons_y];
 	for (int i = 0; i < cons_y; i++) {
-		maz[i] = new int[cons_x];
+		_maze[i] = new int[cons_x];
 	}
 	end_x = cons_x - 2, end_y = cons_y - 2;
 }
 
-TheMazeWindow::TheMazeWindow(int y = 10, int x = 10)
+TheMazeWindow::TheMazeWindow(int y = 15, int x = 15)
 {
-	//В конструкторе инициализация динамического массива лабиринта и его размеров
+	// Р’ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґРёРЅР°РјРёС‡РµСЃРєРѕРіРѕ РјР°СЃСЃРёРІР° Р»Р°Р±РёСЂРёРЅС‚Р° Рё РµРіРѕ СЂР°Р·РјРµСЂРѕРІ
 	cons_x = x, cons_y = y;
-	maz = new int* [cons_y];
+	_maze = new int* [cons_y];
 	for (int i = 0; i < cons_y; i++) {
-		maz[i] = new int[cons_x];
+		_maze[i] = new int[cons_x];
 	}
 	end_x = cons_x - 2, end_y = cons_y - 2;
 }
 
-//функция возврата любой клетки лабиринта по координатам
+// С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‚Р° Р»СЋР±РѕР№ РєР»РµС‚РєРё Р»Р°Р±РёСЂРёРЅС‚Р° РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј
 int TheMazeWindow::getMaze(int y, int x)
 {
-	return maz[y][x];
+	return _maze[y][x];
 }
 
-//подготовка лабиринта, его очистка и заполнение всего стенами
+// РїРѕРґРіРѕС‚РѕРІРєР° Р»Р°Р±РёСЂРёРЅС‚Р°, РµРіРѕ РѕС‡РёСЃС‚РєР° Рё Р·Р°РїРѕР»РЅРµРЅРёРµ РІСЃРµРіРѕ СЃС‚РµРЅР°РјРё
 void TheMazeWindow::prepare()
 {
 	for (int i = 0; i < cons_y; i++) {
 		for (int i1 = 0; i1 < cons_x; i1++) 
 		{ 
-			maz[i][i1] = 0; 
+			_maze[i][i1] = 0;
 		}
 	}
-	number = 1;//1 начальная вершина
-	maz[1][1] = 1;
-	points_x.push_back(1);//добавление в массивы элемента 1,1-начальная точка, от которой рисуем лабиринт
+	number = 1; // 1 РЅР°С‡Р°Р»СЊРЅР°СЏ РІРµСЂС€РёРЅР°
+	_maze[1][1] = 1;
+	points_x.push_back(1); // РґРѕР±Р°РІР»РµРЅРёРµ РІ РјР°СЃСЃРёРІС‹ СЌР»РµРјРµРЅС‚Р° 1,1-РЅР°С‡Р°Р»СЊРЅР°СЏ С‚РѕС‡РєР°, РѕС‚ РєРѕС‚РѕСЂРѕР№ СЂРёСЃСѓРµРј Р»Р°Р±РёСЂРёРЅС‚
 	points_y.push_back(1);
 }
 
-//функция чтобы узнать можно ли вырубить клетку x,y в лабиринте
-//проверка того что эта клетка находится внутри лабиринта, еще не вырублена и что вокруг нее нет в любом направлении нет 3х
-//уже ощищенных клеток лабиринта(иначе бы вообще стен не было нигде, были 2*2 пустые места)
+// С„СѓРЅРєС†РёСЏ С‡С‚РѕР±С‹ СѓР·РЅР°С‚СЊ РјРѕР¶РЅРѕ Р»Рё РІС‹СЂСѓР±РёС‚СЊ РєР»РµС‚РєСѓ x,y РІ Р»Р°Р±РёСЂРёРЅС‚Рµ
+// РїСЂРѕРІРµСЂРєР° С‚РѕРіРѕ С‡С‚Рѕ СЌС‚Р° РєР»РµС‚РєР° РЅР°С…РѕРґРёС‚СЃСЏ РІРЅСѓС‚СЂРё Р»Р°Р±РёСЂРёРЅС‚Р°, РµС‰Рµ РЅРµ РІС‹СЂСѓР±Р»РµРЅР° Рё С‡С‚Рѕ РІРѕРєСЂСѓРі РЅРµРµ РЅРµС‚ РІ Р»СЋР±РѕРј РЅР°РїСЂР°РІР»РµРЅРёРё РЅРµС‚ 3С…
+// СѓР¶Рµ РѕС‰РёС‰РµРЅРЅС‹С… РєР»РµС‚РѕРє Р»Р°Р±РёСЂРёРЅС‚Р°(РёРЅР°С‡Рµ Р±С‹ РІРѕРѕР±С‰Рµ СЃС‚РµРЅ РЅРµ Р±С‹Р»Рѕ РЅРёРіРґРµ, Р±С‹Р»Рё 2*2 РїСѓСЃС‚С‹Рµ РјРµСЃС‚Р°)
 bool TheMazeWindow::testXY(int y, int x)
 {
-	if (x == end_x && y == end_y) { return true; }//чтобы в конце всегда было разрешено строить, иначе при некоторых размерах там получался тупик
-	else if (x<1 || y<1 || x>end_x || y>end_y || maz[y][x] == 1) { return false; }
-	else if (maz[y - 1][x - 1] + maz[y - 1][x] + maz[y][x - 1] >= 3) { return false; }//направление влево вверх 3 клетки
-	else if (maz[y - 1][x] + maz[y - 1][x + 1] + maz[y][x + 1] >= 3) { return false; }//вправо вверх 3 кл
-	else if (maz[y + 1][x - 1] + maz[y + 1][x] + maz[y][x - 1] >= 3) { return false; }//влево вниз 3 кл
-	else if (maz[y + 1][x] + maz[y + 1][x + 1] + maz[y][x + 1] >= 3) { return false; }//вправо вниз 3 кл
+	if (x == end_x && y == end_y) { return true; }//С‡С‚РѕР±С‹ РІ РєРѕРЅС†Рµ РІСЃРµРіРґР° Р±С‹Р»Рѕ СЂР°Р·СЂРµС€РµРЅРѕ СЃС‚СЂРѕРёС‚СЊ, РёРЅР°С‡Рµ РїСЂРё РЅРµРєРѕС‚РѕСЂС‹С… СЂР°Р·РјРµСЂР°С… С‚Р°Рј РїРѕР»СѓС‡Р°Р»СЃСЏ С‚СѓРїРёРє
+	else if (x<1 || y<1 || x>end_x || y>end_y || _maze[y][x] == 1) { return false; }
+	else if (_maze[y - 1][x - 1] + _maze[y - 1][x] + _maze[y][x - 1] >= 3) { return false; }//РЅР°РїСЂР°РІР»РµРЅРёРµ РІР»РµРІРѕ РІРІРµСЂС… 3 РєР»РµС‚РєРё
+	else if (_maze[y - 1][x] + _maze[y - 1][x + 1] + _maze[y][x + 1] >= 3) { return false; }//РІРїСЂР°РІРѕ РІРІРµСЂС… 3 РєР»
+	else if (_maze[y + 1][x - 1] + _maze[y + 1][x] + _maze[y][x - 1] >= 3) { return false; }//РІР»РµРІРѕ РІРЅРёР· 3 РєР»
+	else if (_maze[y + 1][x] + _maze[y + 1][x + 1] + _maze[y][x + 1] >= 3) { return false; }//РІРїСЂР°РІРѕ РІРЅРёР· 3 РєР»
 	else { return true; }
 }
 
-//прорубание пути в лабиринте-массиве maz(который по сути проскость с x и y)
+// РїСЂРѕСЂСѓР±Р°РЅРёРµ РїСѓС‚Рё РІ Р»Р°Р±РёСЂРёРЅС‚Рµ-РјР°СЃСЃРёРІРµ maz(РєРѕС‚РѕСЂС‹Р№ РїРѕ СЃСѓС‚Рё РїР»РѕСЃРєРѕСЃС‚СЊ СЃ x Рё y)
 void TheMazeWindow::generateTree()
 {
-	//сначала чистим
+	// СЃРЅР°С‡Р°Р»Р° С‡РёСЃС‚РёРј
 	prepare();
 
-	int rep = 0;//количество повторений
-	int point = rand() % number;//выбор случайной точки из массивов points_x и points_x, чтобы от нее продолжить лабиринт
-	while (maz[end_y][end_x] != 1) {//пока не дойдем до конца
-		point = rand() % number;//каждый раз генерим случайный номер клетки, из которой будем строить путь
+	int rep = 0; // РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРІС‚РѕСЂРµРЅРёР№
+	int point = rand() % number; // РІС‹Р±РѕСЂ СЃР»СѓС‡Р°Р№РЅРѕР№ С‚РѕС‡РєРё РёР· РјР°СЃСЃРёРІРѕРІ points_x Рё points_x, С‡С‚РѕР±С‹ РѕС‚ РЅРµРµ РїСЂРѕРґРѕР»Р¶РёС‚СЊ Р»Р°Р±РёСЂРёРЅС‚
+	while (_maze[end_y][end_x] != 1) { // РїРѕРєР° РЅРµ РґРѕР№РґРµРј РґРѕ РєРѕРЅС†Р°
+		point = rand() % number; // РєР°Р¶РґС‹Р№ СЂР°Р· РіРµРЅРµСЂРёРј СЃР»СѓС‡Р°Р№РЅС‹Р№ РЅРѕРјРµСЂ РєР»РµС‚РєРё, РёР· РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµРј СЃС‚СЂРѕРёС‚СЊ РїСѓС‚СЊ
 
-		switch (rand() % 4)//рандомное направление постройки прохода
+		switch (rand() % 4) // СЂР°РЅРґРѕРјРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ РїРѕСЃС‚СЂРѕР№РєРё РїСЂРѕС…РѕРґР°
 		{
-			//0-вверх: если в верхней клетке можно сделать проход в соответствии с методом testXY(), и если она и так не пустая, то делаем проход
-		case 0: if (testXY(points_y[point] - 1, points_x[point]) && maz[points_y[point] - 2][points_x[point]] != 1) {
-			maz[points_y[point] - 1][points_x[point]] = 1;//проход
-			//и сразу же пытаемся пробурить еще одну клетку,потому что если бурить по одной лабиринт будет не красивым,
-			//и строить пути мы будем только из клеток с нечетными координатами, тоже по этой причине, иначе не лабиринт а дуршлаг получается
+			// 0-РІРІРµСЂС…: РµСЃР»Рё РІ РІРµСЂС…РЅРµР№ РєР»РµС‚РєРµ РјРѕР¶РЅРѕ СЃРґРµР»Р°С‚СЊ РїСЂРѕС…РѕРґ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РјРµС‚РѕРґРѕРј testXY(), Рё РµСЃР»Рё РѕРЅР° Рё С‚Р°Рє РЅРµ РїСѓСЃС‚Р°СЏ, С‚Рѕ РґРµР»Р°РµРј РїСЂРѕС…РѕРґ
+		case 0: if (testXY(points_y[point] - 1, points_x[point]) && _maze[points_y[point] - 2][points_x[point]] != 1) {
+			_maze[points_y[point] - 1][points_x[point]] = 1;//РїСЂРѕС…РѕРґ
+			// Рё СЃСЂР°Р·Сѓ Р¶Рµ РїС‹С‚Р°РµРјСЃСЏ РїСЂРѕР±СѓСЂРёС‚СЊ РµС‰Рµ РѕРґРЅСѓ РєР»РµС‚РєСѓ,РїРѕС‚РѕРјСѓ С‡С‚Рѕ РµСЃР»Рё Р±СѓСЂРёС‚СЊ РїРѕ РѕРґРЅРѕР№ Р»Р°Р±РёСЂРёРЅС‚ Р±СѓРґРµС‚ РЅРµ РєСЂР°СЃРёРІС‹Рј,
+			// Рё СЃС‚СЂРѕРёС‚СЊ РїСѓС‚Рё РјС‹ Р±СѓРґРµРј С‚РѕР»СЊРєРѕ РёР· РєР»РµС‚РѕРє СЃ РЅРµС‡РµС‚РЅС‹РјРё РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё, С‚РѕР¶Рµ РїРѕ СЌС‚РѕР№ РїСЂРёС‡РёРЅРµ, РёРЅР°С‡Рµ РЅРµ Р»Р°Р±РёСЂРёРЅС‚ Р° РґСѓСЂС€Р»Р°Рі РїРѕР»СѓС‡Р°РµС‚СЃСЏ
 			if (testXY(points_y[point] - 2, points_x[point])) {
-				maz[points_y[point] - 2][points_x[point]] = 1;//проход
-				//запоминаем координаты x и y этой клетки в массивы points, чтобы добавить ее в список клеток, из которых рандомно строятся пути
+				_maze[points_y[point] - 2][points_x[point]] = 1;//РїСЂРѕС…РѕРґ
+				// Р·Р°РїРѕРјРёРЅР°РµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ x Рё y СЌС‚РѕР№ РєР»РµС‚РєРё РІ РјР°СЃСЃРёРІС‹ points, С‡С‚РѕР±С‹ РґРѕР±Р°РІРёС‚СЊ РµРµ РІ СЃРїРёСЃРѕРє РєР»РµС‚РѕРє, РёР· РєРѕС‚РѕСЂС‹С… СЂР°РЅРґРѕРјРЅРѕ СЃС‚СЂРѕСЏС‚СЃСЏ РїСѓС‚Рё
 				points_x.push_back(points_x[point]);
 				points_y.push_back(points_y[point] - 2);
-				number++;//теперь на 1 такую клетку больше
+				number++; // С‚РµРїРµСЂСЊ РЅР° 1 С‚Р°РєСѓСЋ РєР»РµС‚РєСѓ Р±РѕР»СЊС€Рµ
 			}
 		}	break;
-			//аналогично для всех остальных 3х сторон
-		case 1: if (testXY(points_y[point], points_x[point] + 1) && maz[points_y[point]][points_x[point] + 2] != 1) {
-			maz[points_y[point]][points_x[point] + 1] = 1;
+			// Р°РЅР°Р»РѕРіРёС‡РЅРѕ РґР»СЏ РІСЃРµС… РѕСЃС‚Р°Р»СЊРЅС‹С… 3-С… СЃС‚РѕСЂРѕРЅ
+		case 1: if (testXY(points_y[point], points_x[point] + 1) && _maze[points_y[point]][points_x[point] + 2] != 1) {
+			_maze[points_y[point]][points_x[point] + 1] = 1;
 			if (testXY(points_y[point], points_x[point] + 2)) {
-				maz[points_y[point]][points_x[point] + 2] = 1;
+				_maze[points_y[point]][points_x[point] + 2] = 1;
 				points_x.push_back(points_x[point] + 2);
 				points_y.push_back(points_y[point]);
 				number++;
 			}
 		}	break;
-		case 2: if (testXY(points_y[point] + 1, points_x[point]) && maz[points_y[point] + 2][points_x[point]] != 1) {
-			maz[points_y[point] + 1][points_x[point]] = 1;
+		case 2: if (testXY(points_y[point] + 1, points_x[point]) && _maze[points_y[point] + 2][points_x[point]] != 1) {
+			_maze[points_y[point] + 1][points_x[point]] = 1;
 			if (testXY(points_y[point] + 2, points_x[point])) {
-				maz[points_y[point] + 2][points_x[point]] = 1;
+				_maze[points_y[point] + 2][points_x[point]] = 1;
 				points_x.push_back(points_x[point]);
 				points_y.push_back(points_y[point] + 2);
 				number++;
 			}
 		}	break;
-		case 3: if (testXY(points_y[point], points_x[point] - 1) && maz[points_y[point]][points_x[point] - 2] != 1) {
-			maz[points_y[point]][points_x[point] - 1] = 1;
+		case 3: if (testXY(points_y[point], points_x[point] - 1) && _maze[points_y[point]][points_x[point] - 2] != 1) {
+			_maze[points_y[point]][points_x[point] - 1] = 1;
 			if (testXY(points_y[point], points_x[point] - 2)) {
-				maz[points_y[point]][points_x[point] - 2] = 1;
+				_maze[points_y[point]][points_x[point] - 2] = 1;
 				points_x.push_back(points_x[point] - 2);
 				points_y.push_back(points_y[point]);
 				number++;
@@ -118,23 +118,23 @@ void TheMazeWindow::generateTree()
 		}
 		rep++;
 
-		//вызов функциии для оптимизации
+		// РІС‹Р·РѕРІ С„СѓРЅРєС†РёРёРё РґР»СЏ РѕРїС‚РёРјРёР·Р°С†РёРё
 		testforDEADEND(point);
 	}
 }
 
-//функция для проверки вершин, если из текущей вершины невозможно ни в одну сторону прорубить проход, то эта вершина удаляется из списка points, чтобы рандом больше ее не выбирал
-//по тестам ускоряет генерацию лабиринта для больших размеров в 10 и более раз
+// С„СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРµСЂС€РёРЅ, РµСЃР»Рё РёР· С‚РµРєСѓС‰РµР№ РІРµСЂС€РёРЅС‹ РЅРµРІРѕР·РјРѕР¶РЅРѕ РЅРё РІ РѕРґРЅСѓ СЃС‚РѕСЂРѕРЅСѓ РїСЂРѕСЂСѓР±РёС‚СЊ РїСЂРѕС…РѕРґ, С‚Рѕ СЌС‚Р° РІРµСЂС€РёРЅР° СѓРґР°Р»СЏРµС‚СЃСЏ РёР· СЃРїРёСЃРєР° points, С‡С‚РѕР±С‹ СЂР°РЅРґРѕРј Р±РѕР»СЊС€Рµ РµС‘ РЅРµ РІС‹Р±РёСЂР°Р»
+// РїРѕ С‚РµСЃС‚Р°Рј СѓСЃРєРѕСЂСЏРµС‚ РіРµРЅРµСЂР°С†РёСЋ Р»Р°Р±РёСЂРёРЅС‚Р° РґР»СЏ Р±РѕР»СЊС€РёС… СЂР°Р·РјРµСЂРѕРІ РІ 10 Рё Р±РѕР»РµРµ СЂР°Р·
 void TheMazeWindow::testforDEADEND(int num)
 {
 	if (!testXY(points_y[num] - 2, points_x[num])) {
 		if (!testXY(points_y[num] + 2, points_x[num])) {
 			if (!testXY(points_y[num], points_x[num] - 2)) {
 				if (!testXY(points_y[num], points_x[num] + 2)) {
-					near_finish(num);//проверка на то что мы возле финиша, чтобы не было проблем с дорисовкой выхода
+					near_finish(num); // РїСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ С‡С‚Рѕ РјС‹ РІРѕР·Р»Рµ С„РёРЅРёС€Р°, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ РїСЂРѕР±Р»РµРј СЃ РґРѕСЂРёСЃРѕРІРєРѕР№ РІС‹С…РѕРґР°
 					if (number > 1) {
-						auto iter = points_x.cbegin();//немного запутано, это итератор-указатель на начало vectorа, иначе не нашел возможности удалить по номеру элемента 
-						points_x.erase(iter + num);//метод удаления у vector
+						auto iter = points_x.cbegin(); // РёС‚РµСЂР°С‚РѕСЂ-СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С‡Р°Р»Рѕ vectorР° (СѓРґР°Р»РµРЅРёРµ РїРѕ РЅРѕРјРµСЂСѓ СЌР»РµРјРµРЅС‚Р°) 
+						points_x.erase(iter + num); // РјРµС‚РѕРґ СѓРґР°Р»РµРЅРёСЏ Сѓ vector
 						auto iter2 = points_y.cbegin();
 						points_y.erase(iter2 + num);
 						number--;
@@ -145,14 +145,14 @@ void TheMazeWindow::testforDEADEND(int num)
 	}
 }
 
-//если лабиринт с нечетными размерами сторон, то не всегда найдется выход сам по себе,
-//поэтому если рядом вручную его очищаем
+// РµСЃР»Рё Р»Р°Р±РёСЂРёРЅС‚ СЃ РЅРµС‡РµС‚РЅС‹РјРё СЂР°Р·РјРµСЂР°РјРё СЃС‚РѕСЂРѕРЅ, С‚Рѕ РЅРµ РІСЃРµРіРґР° РЅР°Р№РґРµС‚СЃСЏ РІС‹С…РѕРґ СЃР°Рј РїРѕ СЃРµР±Рµ,
+// РїРѕСЌС‚РѕРјСѓ РµСЃР»Рё СЂСЏРґРѕРј, РІСЂСѓС‡РЅСѓСЋ РµРіРѕ РѕС‡РёС‰Р°СЋ
 void TheMazeWindow::near_finish(int num)
 {
 	if (abs(points_y[num] - end_y) <= 2 && abs(points_x[num] - end_x) <= 2) {
 		for (int i = end_y - 1; i <= end_y; i++) {
 			for (int i1 = end_x - 1; i1 <= end_x; i1++) {
-				maz[i][i1] = 1;
+				_maze[i][i1] = 1;
 			}
 		}
 	}
@@ -168,7 +168,7 @@ void TheMazeWindow::draw(HDC hdc, HWND hWnd, RECT rect)
 
 	FillRect(hdc, &rect, _WhiteBrush);
 
-	// Отрисовка стен и путей
+	// РћС‚СЂРёСЃРѕРІРєР° СЃС‚РµРЅ Рё РїСѓС‚РµР№
 	for (int y = 0; y < cons_y; ++y)
 	{
 		for (int x = 0; x < cons_x; ++x)
@@ -176,11 +176,11 @@ void TheMazeWindow::draw(HDC hdc, HWND hWnd, RECT rect)
 			RECT _rectangle = { x * _current_cell_size, y * _current_cell_size,
 								(x + 1) * _current_cell_size, (y + 1) * _current_cell_size };
 
-			if (maz[y][x] == 0)
+			if (_maze[y][x] == 0)
 			{
 				FillRect(hdc, &_rectangle, _BlackBrush);
 			}
-			else if (maz[y][x] == 1)
+			else if (_maze[y][x] == 1)
 			{
 				FillRect(hdc, &_rectangle, _WhiteBrush);
 				Rectangle(hdc, _rectangle.left, _rectangle.top, _rectangle.right, _rectangle.bottom);		
@@ -201,7 +201,7 @@ void TheMazeWindow::drawBotWay(HDC hdc, HWND hWnd, RECT rect)
 
 	FillRect(hdc, &rect, _WhiteBrush);
 
-	// Отрисовка стен и путей
+	// РћС‚СЂРёСЃРѕРІРєР° СЃС‚РµРЅ Рё РїСѓС‚РµР№
 	for (int y = 0; y < cons_y; ++y)
 	{
 		for (int x = 0; x < cons_x; ++x)
@@ -209,11 +209,11 @@ void TheMazeWindow::drawBotWay(HDC hdc, HWND hWnd, RECT rect)
 			RECT _rectangle = { x * _current_cell_size, y * _current_cell_size,
 								(x + 1) * _current_cell_size, (y + 1) * _current_cell_size };
 
-			if (maz[y][x] == 0)
+			if (_maze[y][x] == 0)
 			{
 				FillRect(hdc, &_rectangle, _BlackBrush);
 			}
-			else if (maz[y][x] == 1)
+			else if (_maze[y][x] == 1)
 			{
 				FillRect(hdc, &_rectangle, _WhiteBrush);
 				Rectangle(hdc, _rectangle.left, _rectangle.top, _rectangle.right, _rectangle.bottom);
@@ -223,7 +223,7 @@ void TheMazeWindow::drawBotWay(HDC hdc, HWND hWnd, RECT rect)
 
 	for (vector<pair<int, int>>::iterator i = _wave.begin(); i != _wave.end(); ++i)
 	{
-		
+
 		RECT _rectangle = { (i->first) * _current_cell_size, (i->second) * _current_cell_size,
 								((i->first) + 1) * _current_cell_size, ((i->second) + 1) * _current_cell_size };
 
@@ -235,6 +235,74 @@ void TheMazeWindow::drawBotWay(HDC hdc, HWND hWnd, RECT rect)
 	DeleteObject(_WhiteBrush);
 	DeleteObject(_BlackBrush);
 }
+
+void TheMazeWindow::BotAlgorithm()
+{
+	int** temp_maz = new int* [15];
+
+	for (int i = 0; i < 15; i++) {
+		temp_maz[i] = new int[15];
+	}
+	
+	for (int i = 0; i < 15; i++) {
+		for (int i1 = 0; i1 < 15; i1++)
+		{
+			temp_maz[i][i1] = _maze[i][i1];
+		}
+	}
+	
+	_oldWave.push_back(pair<int, int>(2, 2));
+	temp_maz[2][2] = _nstep;
+	const int dx[] = { 0, 1, 0, -1 };
+	const int dy[] = { -1, 0, 1, 0 };
+
+	while (_oldWave.size() > 0)
+	{
+		++_nstep;
+
+		_wave.clear();
+		for (vector<pair<int, int>>::iterator i = _oldWave.begin(); i != _oldWave.end(); ++i)
+		{
+			for (int d = 0; d < 4; ++d)
+			{
+				int nx = i->first + dx[d];
+				int ny = i->second + dy[d];
+
+			if (temp_maz[nx][ny] == 1)
+				{
+					_wave.push_back(pair<int, int>(nx, ny));
+					temp_maz[nx][ny] = _nstep;
+					if (nx == end_x && ny == end_y)
+						goto done;
+				}
+			}
+			
+		}
+		_oldWave = _wave;
+	}
+done:
+	int _x = end_x;
+	int _y = end_y;
+	_wave.clear();
+	_wave.push_back(pair<int, int>(_x, _y));
+	while (temp_maz[_x][_y] != 0)
+	{
+		for (int d = 0; d < 4; ++d)
+		{
+			int nx = _x + dx[d];
+			int ny = _y + dx[d];
+			if (temp_maz[_x][_y] - 1 == temp_maz[nx][ny])
+			{
+				_x = nx;
+				_y = ny;
+				_wave.push_back(pair<int, int>(_x, _y));
+				break;
+			}
+		}
+	}
+	delete[] temp_maz;
+}
+
 
 float TheMazeWindow::Get_Cell_size()
 {
@@ -410,67 +478,13 @@ void TheMazeWindow::StatisticsWidgets_40x40(HWND hWnd)
 	);
 }
 
-void TheMazeWindow::BotAlgorithm()
-{
-	_oldWave.push_back(pair<int, int>(2, 2));
-	maz[2][2] = _nstep;
-	const int dx[] = { 0, 1, 0, -1 };
-	const int dy[] = { -1, 0, 1, 0 };
-	
-	while (_oldWave.size() > 0)
-	{
-		++_nstep;
-
-		_wave.clear();
-		for (vector<pair<int, int>>::iterator i = _oldWave.begin(); i != _oldWave.end(); ++i)
-		{		
-			for (int d = 0; d < 4; ++d)
-			{
-				int nx = i->first + dx[d];
-				int ny = i->second + dy[d];
-				
-				
-				if (maz[nx][ny] == -1)
-				{
-					_wave.push_back(pair<int, int>(nx, ny));
-					maz[nx][ny] = _nstep;
-					if (nx == end_x && ny == end_y)
-						goto done;
-				}
-			}
-			
-		}
-		_oldWave = _wave;
-	}
-done:
-	int _x = end_x;
-	int _y = end_y;
-	_wave.clear();
-	_wave.push_back(pair<int, int>(_x, _y));
-	while (maz[_x][_y] != 0)
-	{
-		for (int d = 0; d < 4; ++d)
-		{
-			int nx = _x + dx[d];
-			int ny = _y + dx[d];
-			if (maz[_x][_y] - 1 == maz[nx][ny])
-			{
-				_x = nx;
-				_y = ny;
-				_wave.push_back(pair<int, int>(_x, _y));
-				break;
-			}
-		}
-	}
-}
-
 void TheMazeWindow::ActionMoveUp(HWND _hWnd)
 {
 	GetClientRect(_hWnd, &_clientRect);
 	PAINTSTRUCT _psUp;
 	HDC _hdcUp = BeginPaint(_hWnd, &_psUp);
 
-	if (maz[player.GetY() - 1][player.GetX()] == 1) 
+	if (_maze[player.GetY() - 1][player.GetX()] == 1)
 	{ 
 		player.clear(_hdcUp, player.GetX(), player.GetY(), _hWnd); 
 		player.moveUp(); 
@@ -486,7 +500,7 @@ void TheMazeWindow::ActionMoveDown(HWND _hWnd)
 	PAINTSTRUCT _psDown;
 	HDC _hdcDown = BeginPaint(_hWnd, &_psDown);
 
-	if (maz[player.GetY() + 1][player.GetX()] == 1)
+	if (_maze[player.GetY() + 1][player.GetX()] == 1)
 	{
 		player.clear(_hdcDown, player.GetX(), player.GetY(), _hWnd);
 		player.moveDown();
@@ -502,7 +516,7 @@ void TheMazeWindow::ActionMoveLeft(HWND _hWnd)
 	PAINTSTRUCT _psLeft;
 	HDC _hdcLeft = BeginPaint(_hWnd, &_psLeft);
 
-	if (maz[player.GetY()][player.GetX() - 1] == 1)
+	if (_maze[player.GetY()][player.GetX() - 1] == 1)
 	{
 		player.clear(_hdcLeft, player.GetX(), player.GetY(), _hWnd);
 		player.moveLeft();
@@ -518,7 +532,7 @@ void TheMazeWindow::ActionMoveRight(HWND _hWnd)
 	PAINTSTRUCT _psRight;
 	HDC _hdcRight = BeginPaint(_hWnd, &_psRight);
 
-	if (maz[player.GetY()][player.GetX() + 1] == 1)
+	if (_maze[player.GetY()][player.GetX() + 1] == 1)
 	{
 		player.clear(_hdcRight, player.GetX(), player.GetY(), _hWnd);
 		player.moveRight();

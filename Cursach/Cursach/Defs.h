@@ -58,7 +58,6 @@ static int _transmittedMazeSize = NULL;
 static int _SelectedMazeGameMode = NULL;
 static int _gameID = 0;
 
-
 class MainMenu
 {
 public:
@@ -161,10 +160,11 @@ public:
 	StatisticsWindow();
 	~StatisticsWindow();
 
+	void StatisticsWidget(HWND hWnd);
+
 private:
-	int _roomsCounter = 0;
-	int _coinsCounter = 0;
-	
+	HWND _Info = NULL;
+
 	class GameOver
 	{
 
@@ -200,12 +200,19 @@ public:
 	Room();
 	~Room();
 
+	int GetCoins15();
+	int GetCoins30();
+	int GetCoins45();
 
+	int GetRooms15();
+	int GetRooms30();
+	int GetRooms45();
 
 private:
 	const int cell_size = 26;
 
 	int _roomCoins = NULL;
+	int _roomCount = NULL;
 
 	class Spikes
 	{
@@ -262,22 +269,22 @@ public:
 	void StatisticsWidgets_25x25(HWND hWnd);
 	void StatisticsWidgets_40x40(HWND hWnd);
 
-	void BotAlgorithm();
 	void drawBotWay(HDC hdc, HWND hWnd, RECT rect);
+	void BotAlgorithm();
 
 private:
-	//сам лабиринт на плоскости, если элемент= 0-стена, если =1-проход(двумерный массив, сделал динамическим чтобы при запуске можно было задавать размеры)
-	int** maz;
-	int cons_x, cons_y;//переменные для размера лабиринта, чем больше тем дольше генерируется
+	// сам лабиринт на плоскости, если элемент = 0-стена, если = 1-проход (двумерный массив, сделан динамическим, чтобы при запуске можно было задавать размеры)
+	int** _maze;
+	int cons_x, cons_y; //переменные для размера лабиринта: чем больше, тем дольше генерируется
 
-	vector<int> points_x;//глупое решение, но первое что пришло в голову, хранить в 2х массивах координаты тех точек лабиринта, которые уже вырублены, т.е вершины   
-	vector<int> points_y;//чтобы из них потом продолжать строить ответвления, рандомно выбирая точки из этих массивов и рандомное направление прокладки пути 
-	int number;//собственно, переменная, чтобы знать насколько заполнены предыдущие массивы, и выбирать из них случайный
+	vector<int> points_x; // храним в 2х массивах координаты тех точек лабиринта, которые уже вырублены, т.е вершины   
+	vector<int> points_y; // чтобы из них потом продолжать строить ответвления, рандомно выбирая точки из этих массивов и рандомное направление прокладки пути 
+	int number; // переменная, чтобы знать насколько заполнены предыдущие массивы, и выбирать из них случайный
 
-	Character player;//символ игрока
-	Camera camera;//для управления камерой
+	Character player; // игрок
+	Camera camera; // для управления камерой
 	Room room; // комната
-	int end_x, end_y;//координаты выхода
+	int end_x, end_y; // координаты выхода
 	
 	HDC _hdc = NULL;
 	RECT _clientRect;
@@ -291,7 +298,9 @@ private:
 	
 	vector<pair<int, int>> _wave;
 	vector<pair<int, int>> _oldWave;
-	int _nstep = 0;
+
+	int _nstep = NULL;
+
 };
 
 
