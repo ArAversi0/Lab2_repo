@@ -90,7 +90,8 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 										if (_SelectedMazeGameMode == _PlayerChoosen || _SelectedMazeGameMode == NULL)
 										{
 											srand((unsigned)time(NULL));
-											ma.generateTree();									
+											ma.generateTree();
+											ma.outFile();
 											RECT _rect_1;
 											GetClientRect(hWndMaze, &_rect_1);
 											PAINTSTRUCT _ps_1;
@@ -103,19 +104,17 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 										else if (_SelectedMazeGameMode == _BotChoosen)
 										{
 											srand((unsigned)time(NULL));
-											ma.generateTree();											
+											ma.generateTree();
+											ma.outFile();
 											RECT _rect_2;
 											GetClientRect(hWndMaze, &_rect_2);
 											PAINTSTRUCT _ps_2;
 											HDC _hdc_2 = BeginPaint(hWndMaze, &_ps_2);
-											ma.draw(_hdc_2, hWndMaze, _rect_2);
-											/*ma.BotAlgorithm();
-											ma.drawBotWay(_hdc_2, hWndMaze, _rect_2);*/
+											ma.BotAlgorithm();
+											ma.drawBotWay(_hdc_2, hWndMaze, _rect_2);
 											EndPaint(hWndMaze, &_ps_2);
 
-										}
-
-									
+										}		
 										break;
 									}
 
@@ -214,6 +213,59 @@ LRESULT CALLBACK MainProcedure(HWND _hWnd, UINT _message, WPARAM _wp, LPARAM _lp
 					return DefWindowProc(hWnd, _playMsg, _wp, _lp);
 			});
 			_menu.SetPlay(_PlayResult.second);
+
+			break;
+		}
+
+		case COMMANDS::OnDownLoadClicked:
+		{
+			if (_menu.GetDownload()) DestroyWindow(_menu.GetDownload());
+			std::pair<bool, HWND> _DownLoadResult = _menu.AddWindow(L"DownloadWndClass", L"The Maze", _hWnd,
+				[](HWND hWndDwLd, UINT _DownloadMsg, WPARAM _wp, LPARAM _lp) -> LRESULT {
+					TheMazeWindow ma;
+
+					switch (_DownloadMsg)
+					{
+					case WM_CREATE:
+					{	
+						SetWindowPos(hWndDwLd, HWND_TOPMOST, 0, 0, 1079, 1079, NULL);
+
+						break;
+					}
+					case WM_PAINT:
+					{
+						if (_SelectedMazeGameMode == _PlayerChoosen || _SelectedMazeGameMode == NULL)
+						{
+							srand((unsigned)time(NULL));
+							RECT _rect_3;
+							GetClientRect(hWndDwLd, &_rect_3);
+							PAINTSTRUCT _ps_3;
+							HDC _hdc_3 = BeginPaint(hWndDwLd, &_ps_3);
+							ma.draw(_hdc_3, hWndDwLd, _rect_3);
+							EndPaint(hWndDwLd, &_ps_3);
+
+
+						}
+						else if (_SelectedMazeGameMode == _BotChoosen)
+						{
+							srand((unsigned)time(NULL));
+							RECT _rect_3;
+							GetClientRect(hWndDwLd, &_rect_3);
+							PAINTSTRUCT _ps_3;
+							HDC _hdc_3 = BeginPaint(hWndDwLd, &_ps_3);
+							ma.draw(_hdc_3, hWndDwLd, _rect_3);
+							EndPaint(hWndDwLd, &_ps_3);
+						}
+						
+						break;
+					}
+
+					default:
+						break;
+					}
+					return DefWindowProc(hWndDwLd, _DownloadMsg, _wp, _lp);
+				});
+			_menu.SetDownload(_DownLoadResult.second);
 
 			break;
 		}

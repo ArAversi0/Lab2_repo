@@ -4,12 +4,43 @@ TheMazeWindow::~TheMazeWindow() { delete[] _maze; }
 
 TheMazeWindow::TheMazeWindow()
 {
-	// В конструкторе инициализация динамического массива лабиринта и его размеров
-	cons_x = 10, cons_y = 10;
+	// Открываем файл для чтения
+	ifstream inFile("TheLastMaze.txt", ios::in);
+	
+	// Проверяем, открылся ли файл
+	if (!inFile.is_open()) {
+		cerr << "Не удалось открыть файл для чтения\n";
+	}
+
+	string s;
+	getline(inFile, s);
+	if (s.length() <= 30)
+	{
+		cons_y = cons_x = 15;
+	}
+	else if (s.length() <= 50)
+	{
+		cons_y = cons_x = 25;
+	}
+	else
+	{
+		cons_y = cons_x = 40;
+	}
+	
 	_maze = new int* [cons_y];
 	for (int i = 0; i < cons_y; i++) {
 		_maze[i] = new int[cons_x];
 	}
+
+	// Считываем массив из файла
+	for (int i = 0; i < cons_x; ++i) {
+		for (int j = 0; j < cons_y; ++j) {
+			inFile >> _maze[i][j];
+		}
+	}
+	// Закрываем файл
+	inFile.close();
+	
 	end_x = cons_x - 2, end_y = cons_y - 2;
 }
 
@@ -158,8 +189,6 @@ void TheMazeWindow::near_finish(int num)
 	}
 }
 
-
-
 void TheMazeWindow::draw(HDC hdc, HWND hWnd, RECT rect)
 {
 	int _current_cell_size = Get_Cell_size();
@@ -238,21 +267,21 @@ void TheMazeWindow::drawBotWay(HDC hdc, HWND hWnd, RECT rect)
 
 void TheMazeWindow::BotAlgorithm()
 {
-	int** temp_maz = new int* [15];
+	int** temp_maz = new int* [cons_y];
 
-	for (int i = 0; i < 15; i++) {
-		temp_maz[i] = new int[15];
+	for (int i = 0; i < cons_y; i++) {
+		temp_maz[i] = new int[cons_x];
 	}
 	
-	for (int i = 0; i < 15; i++) {
-		for (int i1 = 0; i1 < 15; i1++)
+	for (int i = 0; i < cons_x; i++) {
+		for (int i1 = 0; i1 < cons_y; i1++)
 		{
 			temp_maz[i][i1] = _maze[i][i1];
 		}
 	}
 	
-	_oldWave.push_back(pair<int, int>(2, 2));
-	temp_maz[2][2] = _nstep;
+	_oldWave.push_back(pair<int, int>(1, 1));
+	temp_maz[1][1] = _nstep;
 	const int dx[] = { 0, 1, 0, -1 };
 	const int dy[] = { -1, 0, 1, 0 };
 
@@ -290,9 +319,18 @@ done:
 		for (int d = 0; d < 4; ++d)
 		{
 			int nx = _x + dx[d];
-			int ny = _y + dx[d];
-			if (temp_maz[_x][_y] - 1 == temp_maz[nx][ny])
+			int ny = _y + dy[d];
+			if ((temp_maz[_x][_y] - 1 == temp_maz[nx][ny]))
 			{
+				if (nx == 1 && ny == 3)
+				{
+					temp_maz[1][2] = 1;
+				}
+				else if (nx == 3 && ny == 1)
+				{
+					temp_maz[2][1] = 1;
+				}
+				
 				_x = nx;
 				_y = ny;
 				_wave.push_back(pair<int, int>(_x, _y));
@@ -303,6 +341,33 @@ done:
 	delete[] temp_maz;
 }
 
+
+void TheMazeWindow::outFile()
+{
+	// Открываем файл для записи в режиме перезаписи
+	ofstream outFile("TheLastMaze.txt", ios::out | ios::trunc);
+
+	// Проверяем, открылся ли файл
+	if (!outFile.is_open()) {
+		cerr << "Не удалось открыть файл для записи\n";
+	}
+
+	// Записываем массив в файл
+	for (int i = 0; i < cons_x; ++i) {
+		for (int j = 0; j < cons_y; ++j) {
+			outFile << _maze[i][j] << ' ';
+		}
+		outFile << '\n';
+	}
+
+	// Закрываем файл
+	outFile.close();
+}
+
+void TheMazeWindow::SetInitMazeSize(int _val)
+{
+	_initializeMazeSize = _val;
+}
 
 float TheMazeWindow::Get_Cell_size()
 {

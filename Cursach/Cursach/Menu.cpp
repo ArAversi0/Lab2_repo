@@ -20,11 +20,21 @@ void MainMenu::AddMainMenu(HWND hWnd)
 		GetModuleHandle(0), NULL
 	);
 
+	_DownloadBtn = CreateWindowA(
+		"button",
+		"Download",
+		WS_VISIBLE | WS_CHILD | ES_CENTER,
+		_LEFT, _TOP * 2, 250, 60,
+		hWnd,
+		(HMENU)COMMANDS::OnDownLoadClicked,
+		GetModuleHandle(0), NULL
+	);
+
 	_StatBtn = CreateWindowA(
 		"button",
 		"Statistics",
 		WS_VISIBLE | WS_CHILD | ES_CENTER,
-		_LEFT, _TOP * 2, 250, 60,
+		_LEFT, _TOP * 3, 250, 60,
 		hWnd,
 		(HMENU)COMMANDS::OnStatisticsClicked,
 		GetModuleHandle(0), NULL
@@ -34,7 +44,7 @@ void MainMenu::AddMainMenu(HWND hWnd)
 		"button",
 		"Settings",
 		WS_VISIBLE | WS_CHILD | ES_CENTER,
-		_LEFT, _TOP * 3, 250, 60,
+		_LEFT, _TOP * 4, 250, 60,
 		hWnd,
 		(HMENU)COMMANDS::OnSettingsClicked,
 		GetModuleHandle(0), NULL
@@ -44,7 +54,7 @@ void MainMenu::AddMainMenu(HWND hWnd)
 		"button",
 		"Exit",
 		WS_VISIBLE | WS_CHILD | ES_CENTER,
-		_LEFT, _TOP * 4, 250, 60,
+		_LEFT, _TOP * 5, 250, 60,
 		hWnd,
 		(HMENU)COMMANDS::OnExitClicked,
 		GetModuleHandle(0), NULL
@@ -122,6 +132,15 @@ void MainMenu::SetPlay(HWND _hChild)
 	_PlayWnd = _hChild;
 }
 
+HWND MainMenu::GetDownload()
+{
+	return _Download;
+}
+
+void MainMenu::SetDownload(HWND _hChild)
+{
+	_Download = _hChild;
+}
 
 
 

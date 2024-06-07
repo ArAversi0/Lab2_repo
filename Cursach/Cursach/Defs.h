@@ -11,6 +11,7 @@
 #include <cmath>
 #include <conio.h>
 #include <gdiplus.h>
+#include <fstream>
 
 using namespace std;
 using namespace Gdiplus;
@@ -49,7 +50,9 @@ enum COMMANDS
 	Right_D_Pressed = 18,
 	Take_E_Pressed = 19,
 
-	OnFinishClicked = 100
+	OnFinishClicked = 100,
+
+	OnDownLoadClicked = 101
 
 };
 
@@ -80,8 +83,12 @@ public:
 	HWND GetPlay();
 	void SetPlay(HWND _hChild);
 
+	HWND GetDownload();
+	void SetDownload(HWND _hChild);
+
 private:
 	HWND _PlayBtn = NULL;
+	HWND _DownloadBtn = NULL;
 	HWND _StatBtn = NULL;
 	HWND _SettBtn = NULL;
 	HWND _ExitBtn = NULL;
@@ -89,6 +96,8 @@ private:
 	HWND _SettingsWnd = NULL;
 	HWND _StatisticsWnd = NULL;
 	HWND _PlayWnd = NULL;
+	HWND _Download = NULL;
+	
 };
 
 class SettingsWindow : public MainMenu
@@ -163,7 +172,7 @@ public:
 	void StatisticsWidget(HWND hWnd);
 
 private:
-	HWND _Info = NULL;
+	HWND _Info = NULL;	
 
 	class GameOver
 	{
@@ -272,6 +281,10 @@ public:
 	void drawBotWay(HDC hdc, HWND hWnd, RECT rect);
 	void BotAlgorithm();
 
+	void outFile();
+
+	void SetInitMazeSize(int val);
+
 private:
 	// сам лабиринт на плоскости, если элемент = 0-стена, если = 1-проход (двумерный массив, сделан динамическим, чтобы при запуске можно было задавать размеры)
 	int** _maze;
@@ -299,8 +312,9 @@ private:
 	vector<pair<int, int>> _wave;
 	vector<pair<int, int>> _oldWave;
 
-	int _nstep = NULL;
+	int _nstep = 0;
 
+	int _initializeMazeSize = 0;
 };
 
 
